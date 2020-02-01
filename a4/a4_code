@@ -1,0 +1,21 @@
+#ashley lynch code for a4
+#it doesnt work.
+
+import csv                  #imports CSV module
+trump_tweets_list = []      #creates empty list variable
+row_count = 0               #var for if logic so it shows row number
+
+#opens the CSV
+with open('trump_tweets.csv', 'r') as csvfile:
+    
+    #converts reader to object
+    reader = csv.DictReader(csvfile)
+   
+    #loop over the reader object
+    for tweets_row_dict in reader:
+        row_count += 1
+        trump_tweets.append(tweets_row_dict)
+        if row_count <= 10 or row_count %10000 == 0:
+
+        #print item from the row
+            print(row_count, tweets_row_dict['content'])
