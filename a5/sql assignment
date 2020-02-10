@@ -1,0 +1,63 @@
+"""
+Moving datat from CSV into SQLite db.
+Date: Feb 9th 2020
+Author: Ashley Lynch
+"""
+import csv                      #imports CSV module
+import sqlite3
+
+DB_FILE = 'superbowl_ads.db'
+conn = sqlite3.connect(DB_FILE)
+
+def create_ads_table():
+    cur = conn.cursor()
+    str_sql = """
+        CREATE TABLE if not exists ads (
+            id integer priamry key autoincrement,
+            year integer,
+            product_type text,
+            product_title text,
+            notes text,
+        );
+        
+        """
+    cur.execute(str_sql)
+    conn.commit()
+
+
+def open_csv_insert_into_db():
+    row_count = 0                                               #var for if logic so it shows row number
+    with open('superbowl_ads.csv', 'r',) as csv_fi:             #opens the CSV
+        reader = csv.DictReader(csv_fi)                         #converts reader to object
+        for ads_dic in reader:                                  #loop over the reader object
+            row_count += 1
+            
+            t_year = ads_dic ['year']
+            t_product_type = ads_dic ['product type']
+            t_product_title = ads_dic ['product title']
+            t_notes = ads_dic ['notes']
+
+            sql_str_insert_with_param = """
+            INSERT INTO ads
+                (year, product type, product title, notes)
+            VALUES
+                (?, ?, ?,);
+            """
+
+            data_tuple = (t_year, t_product_type, t_product_title, t_notes)
+            cur.execute(sql_str_insert_with_param, data_tuple)
+            conn.commit()
+
+            if row_count <= 10 or row_count %10000 == 0:
+                print(row_count, ads_dic['notes'])            #print item from the row
+
+
+def main():
+    create_ads_table()
+    open_csv_insert_into_db()
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()
+         
